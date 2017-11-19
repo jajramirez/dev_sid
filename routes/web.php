@@ -171,6 +171,10 @@ Route::get('/home', 'HomeController@index')->name('home');
 				'uses' => 'FuidController@etiquetas',
 				'as' =>  'fuid.etiquetas'
 			]);
+				Route::get('fuid/etiquetasfuid', [
+				'uses' => 'FuidController@etiquetasfuid',
+				'as' =>  'fuid.etiquetasfuid'
+			]);
 		Route::post('fuid/pdf', [
 				'uses' => 'FuidController@pdf',
 				'as' =>  'fuid.pdf'

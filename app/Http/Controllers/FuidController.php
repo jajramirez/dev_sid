@@ -255,17 +255,19 @@ class FuidController extends Controller
 
     public function pdf(Request $request)
     {
-	
+
 	date_default_timezone_set('America/Bogota');
-        $FEC_ACTU = strftime( "%Y-%m-%d", time() );
+    $FEC_ACTU = strftime( "%Y-%m-%d", time() );
+    $name  = null;  
 
-
-	$fuid = DB::table('V_SIS_FUID')
-	    ->where('V_SIS_FUID.CON_BODE', '=', $request->CON_BODE)
+    $coun = strlen($request->CON_BODE);
+    if($coun > 0)
+    {
+        $fuid = DB::table('V_SIS_FUID')
+            ->where('V_SIS_FUID.CON_BODE', '=', $request->CON_BODE)
             ->join('SID_ORGA', 'V_SIS_FUID.COD_ORGA', '=', 'SID_ORGA.COD_ORGA')
             ->select('V_SIS_FUID.*', 'SID_ORGA.NOM_ORGA')
             ->get();
-	//dd($fuid);
 
         $view =  \View::make('pdf.etiquetas', compact('fuid', 'FEC_ACTU'))->render();
         $pdf = \App::make('dompdf.wrapper');
@@ -273,7 +275,33 @@ class FuidController extends Controller
         $name = time();
         $filename =  public_path() ."/documentos/etiquetas". $name. ".pdf";
         file_put_contents($filename, $pdf->stream('etiquetas'));
-        return $name;
+        
+
+    }
+    else
+    {
+         $fuid = DB::table('V_SIS_FUID')
+            ->where('V_SIS_FUID.COD_TRD', '=', $request->COD_TRD)
+            ->where('V_SIS_FUID.COD_ENTI', '=', $request->COD_ENTI)
+            ->where('V_SIS_FUID.NUM_REGI', '=', $request->NUN_REGI)
+            ->join('SID_ORGA', 'V_SIS_FUID.COD_ORGA', '=', 'SID_ORGA.COD_ORGA')
+            ->select('V_SIS_FUID.*', 'SID_ORGA.NOM_ORGA')
+            ->get();
+
+        $f = $fuid[0];
+
+        $view =  \View::make('pdf.etiquetasfuid', compact('f', 'FEC_ACTU'))->render();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($view);
+        $name = time();
+        $filename =  public_path() ."/documentos/etiquetas". $name. ".pdf";
+        file_put_contents($filename, $pdf->stream('etiquetas'));
+
+    }
+
+    return $name;
+    
+        
     }
 
     public function datos(Request $request)

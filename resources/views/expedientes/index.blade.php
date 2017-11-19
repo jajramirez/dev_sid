@@ -445,7 +445,7 @@ $(document).ready(function() {
             "infoFiltered": "(filtro desde _MAX_ total registros)",
             "search": "Buscar"
         }
-    });'{{ $expediente->NOM_ARCH}}'
+    });
   });
 });
 

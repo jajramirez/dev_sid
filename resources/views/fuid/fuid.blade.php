@@ -203,6 +203,7 @@
 				<th>Numero Transferencia</th>
 				<th>Archivo</th>
 				<th>Metadatos</th>
+				<th>Etiqueta</th>
 				<th>Acción</th>
 			</thead>
 			<tbody>
@@ -258,6 +259,9 @@
 									Consultar
 								</button>
 								
+							</td>
+							<td>
+								<button title="Generar Etiqueta" class="btn btn-primary"  onclick ="generaretiquetas('{{$dato->COD_ENTI}}','{{$dato->COD_TRD}}','{{$dato->NUM_REGI}}')">Generar</button> 
 							</td>
 							<td>
 								<a href="{{ route('fuid.edit', $dato->COD_ENTI.'_'.$dato->COD_TRD.'_'.$dato->NUM_REGI) }}"  class="btn btn-warning fa fa-pencil" title="Editar Registro"></a>
@@ -379,6 +383,33 @@ $(document).ready(function() {
 
 } );
 
+
+function generaretiquetas(enti, trd, regi) {
+			var PostUri = "{{ route('fuid.pdf')}}";
+			bodega = '';
+			$.ajax({
+		    url: PostUri,
+		    type: 'post',
+		    data: {
+		        CON_BODE: bodega, 
+		        COD_ENTI: enti,
+		        COD_TRD: trd,
+		        NUN_REGI: regi
+		    },
+		    headers: {
+		        'X-CSRF-TOKEN': "{{ Session::token() }}", //for object property name, use quoted notation shown in second
+		    },
+		    success: function (data) {
+		        if(data != "error")
+		        {
+		                urlb = "{{url('/')}}"; 
+		                var url = urlb+"/documentos/etiquetas"+data+".pdf";
+		                window.open(url, "", "width=800,height=800");
+		        }
+
+		    }
+		});
+	}
 </script>
 
 	<script type="text/javascript">
